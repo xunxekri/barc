@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <wchar.h>
 #include <string.h>
-#include <errno.h>
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -21,8 +20,8 @@ static void update_weather(char *buf, size_t buf_length) {
 	FILE *weatherfile = fopen("/tmp/weather", "r");
 
 	if (weatherfile == NULL) {
-		perror("Failure opening weather file");
-		exit(1);
+		sprintf(buf, "No weather data.");
+		return;
 	}
 
 	fseek(weatherfile, 0, SEEK_END);
@@ -126,11 +125,8 @@ char *weather() {
 
 	struct stat file_stat;
 	if (stat("/tmp/weather", &file_stat) != 0) {
-		perror("Failure getting status of weather file");
-		exit(1);
-	}
-
-	if (file_stat.st_mtime > last_modified) {
+		return "No weather data.";
+	} else if (file_stat.st_mtime > last_modified) {
 		last_modified = file_stat.st_mtime;
 		update_weather(weather_str, MAX_LENGTH);
 	}
