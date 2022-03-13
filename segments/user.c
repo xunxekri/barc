@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include <stdio.h>
-#include "constants.h"
+#include "../constants.h"
 
 char *user() {
 	char *username = getlogin();

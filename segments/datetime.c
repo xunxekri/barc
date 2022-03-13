@@ -1,5 +1,5 @@
 #include <time.h>
-#include "constants.h"
+#include "../constants.h"
 
 char *datetime() {
 	time_t current_time = time(NULL);
