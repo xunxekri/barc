@@ -3,6 +3,9 @@
 #include <wchar.h>
 #include <string.h>
 #include <locale.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "../constants.h"
 
 static int min(int a, int b) {
@@ -13,7 +16,7 @@ static int bitbs(char c) {
 	return (c >> 1 & c & 64);
 }
 
-char *weather() {
+static void update_weather(char *buf, size_t buf_length) {
 	FILE *weatherfile = fopen("/tmp/weather", "r");
 
 	fseek(weatherfile, 0, SEEK_END);
@@ -21,16 +24,16 @@ char *weather() {
 	rewind(weatherfile);
 
  	setlocale(LC_ALL, "en_US.UTF-8");
- 	char content[1+length];	
+ 	char content[length+1];
 	fread(content, length, 1, weatherfile);
 	content[length] = '\0';
+	fclose(weatherfile);
 
 	wchar_t adam_driver[length+1];
 	wchar_t *whatever = adam_driver;
 	wchar_t ben_swolo[length+1];
 	wchar_t *temp = ben_swolo;
 	mbstowcs(adam_driver, content, length + 1);
-	//adam_driver[length] = L'\0';
 	while (*whatever != L'\0') {
 		switch(*whatever) {
 			case 0x2600:
@@ -100,18 +103,26 @@ char *weather() {
 		temp++;
 		whatever++;
 	}
-	temp = L'\0';
-	//wprintf(adam_driver);
-	static char final[MAX_LENGTH];
-	//printf(":%d\n", (int)
+	*temp = L'\0';
+
 	wcstombs(content, ben_swolo, length + 1);
-	strncpy(final, content, MAX_LENGTH);
-	char *temp2 = final + MAX_LENGTH - 1;
+	strncpy(buf, content, buf_length);
+	char *temp2 = buf + buf_length - 1;
 	while(bitbs(*temp2)) {
 		printf("%c", *temp2);
 		temp2--;
 	}
 	*temp2 = '\0';
-	fclose(weatherfile);
-	return final;
+}
+
+char *weather() {
+	static char weather_str[MAX_LENGTH];
+	static time_t last_modified = 0;
+
+	struct stat file_stat;
+	stat("/tmp/weather", &file_stat);
+	if (file_stat.st_mtime > last_modified)
+		update_weather(weather_str, MAX_LENGTH);
+
+	return weather_str;
 }
