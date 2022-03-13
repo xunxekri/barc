@@ -130,8 +130,10 @@ char *weather() {
 		exit(1);
 	}
 
-	if (file_stat.st_mtime > last_modified)
+	if (file_stat.st_mtime > last_modified) {
+		last_modified = file_stat.st_mtime;
 		update_weather(weather_str, MAX_LENGTH);
+	}
 
 	return weather_str;
 }
