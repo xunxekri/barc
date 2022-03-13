@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <wchar.h>
 #include <string.h>
+#include <errno.h>
 #include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -13,11 +14,16 @@ static int min(int a, int b) {
 }
 
 static int bitbs(char c) {
-	return (c >> 1 & c & 64);
+	return c >> 1 & c & 64;
 }
 
 static void update_weather(char *buf, size_t buf_length) {
 	FILE *weatherfile = fopen("/tmp/weather", "r");
+
+	if (weatherfile == NULL) {
+		perror("Failure opening weather file");
+		exit(1);
+	}
 
 	fseek(weatherfile, 0, SEEK_END);
 	int length = (int) ftell(weatherfile);
@@ -108,10 +114,9 @@ static void update_weather(char *buf, size_t buf_length) {
 	wcstombs(content, ben_swolo, length + 1);
 	strncpy(buf, content, buf_length);
 	char *temp2 = buf + buf_length - 1;
-	while(bitbs(*temp2)) {
-		printf("%c", *temp2);
+	while(bitbs(*temp2))
 		temp2--;
-	}
+
 	*temp2 = '\0';
 }
 
@@ -120,7 +125,11 @@ char *weather() {
 	static time_t last_modified = 0;
 
 	struct stat file_stat;
-	stat("/tmp/weather", &file_stat);
+	if (stat("/tmp/weather", &file_stat) != 0) {
+		perror("Failure getting status of weather file");
+		exit(1);
+	}
+
 	if (file_stat.st_mtime > last_modified)
 		update_weather(weather_str, MAX_LENGTH);
 
