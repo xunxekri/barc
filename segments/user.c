@@ -8,4 +8,5 @@ char *user() {
 	gethostname(hostname, MAX_LENGTH);
 	static char ret[MAX_LENGTH * 2 + 1];
 	sprintf(ret, "%s@%s", username, hostname);
+	return ret;
 }
