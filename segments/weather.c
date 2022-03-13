@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include "../constants.h"
 
+static int min(int a, int b) {
+    return a > b ? b : a;
+}
+
 char *weather() {
 	FILE *weatherfile = fopen("/tmp/weather", "r");
 
@@ -9,8 +13,8 @@ char *weather() {
 	rewind(weatherfile);
 
 	static char content[MAX_LENGTH];	
-	fread(content, length, 1, weatherfile);
-	content[length - 1] = '\0';
+	fread(content, min(MAX_LENGTH, length), 1, weatherfile);
+	content[min(length + 1, MAX_LENGTH - 1)] = '\0';
 
 	fclose(weatherfile);
 	return content;
