@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <wchar.h>
+#include <string.h>
+#include <locale.h>
 #include "../constants.h"
 
 static int min(int a, int b) {
@@ -17,16 +20,19 @@ char *weather() {
 	int length = (int) ftell(weatherfile);
 	rewind(weatherfile);
 
-	char *content = malloc(length + 1);	
+ 	setlocale(LC_ALL, "en_US.UTF-8");
+ 	char content[1+length];	
 	fread(content, length, 1, weatherfile);
 	content[length] = '\0';
 
-	wchar_t adam_driver[length];
-	wchar_t *temp;
-	mbstowcs(adam_driver, content, length);
-	adam_driver[MAX_LENGTH] = L'\0';
-	while (*temp != L'\0') {
-		switch(*temp) {
+	wchar_t adam_driver[length+1];
+	wchar_t *whatever = adam_driver;
+	wchar_t ben_swolo[length+1];
+	wchar_t *temp = ben_swolo;
+	mbstowcs(adam_driver, content, length + 1);
+	//adam_driver[length] = L'\0';
+	while (*whatever != L'\0') {
+		switch(*whatever) {
 			case 0x2600:
 				*temp = 0xe30d;
 			break;
@@ -84,13 +90,28 @@ char *weather() {
 			case 0x1f32b:
 				*temp = 0xe31e;
 			break;
+			case 0xb0:
+			case 43: //plus sign
+				*temp--; //skip
+			break;
+			default:
+				*temp = *whatever;
 		}
+		temp++;
+		whatever++;
 	}
-	wcstombs(content, adam_driver, MAX_LENGTH);
-	char *temp2 = content + MAX_LENGTH - 1;
-	while(bitbs(*temp2))
+	temp = L'\0';
+	//wprintf(adam_driver);
+	static char final[MAX_LENGTH];
+	//printf(":%d\n", (int)
+	wcstombs(content, ben_swolo, length + 1);
+	strncpy(final, content, MAX_LENGTH);
+	char *temp2 = final + MAX_LENGTH - 1;
+	while(bitbs(*temp2)) {
+		printf("%c", *temp2);
 		temp2--;
+	}
 	*temp2 = '\0';
 	fclose(weatherfile);
-	return content;
+	return final;
 }
