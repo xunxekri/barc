@@ -126,7 +126,7 @@ Seg weather() {
 
 	struct stat file_stat;
 	if (stat("/tmp/weather", &file_stat) != 0) {
-		return "No weather data.";
+		sprintf(weather_seg.value, "No weather data.");
 	} else if (file_stat.st_mtime > last_modified) {
 		last_modified = file_stat.st_mtime;
 		update_weather(weather_seg.value, MAX_LENGTH);
