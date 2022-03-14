@@ -101,7 +101,7 @@ static void update_weather(char *buf, size_t buf_length) {
 			break;
 			case 0xb0:
 			case 43: //plus sign
-				*temp -= 1; //skip
+				temp--; //skip
 			break;
 			default:
 				*temp = *whatever;

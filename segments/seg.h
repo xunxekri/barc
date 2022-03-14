@@ -59,5 +59,17 @@ static char *color_strings[] = {
 	[ROSEWATER] = "F5E0DC",
 	[TRANSPARENT] = "00000000"
 };
+
+static Color percent_to_color(int percent) {
+	if(percent < 0 || percent > 100) return WHITE;
+	if(percent >= 88) return MAUVE;
+	if(percent >= 76) return SKY;
+	if(percent >= 63) return BLUE;
+	if(percent >= 51) return TEAL;
+	if(percent >= 38) return GREEN;
+	if(percent >= 26) return YELLOW;
+	if(percent >= 13) return PEACH;
+	return RED;
+}
 	
 #endif
