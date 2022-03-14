@@ -1,12 +1,14 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "../constants.h"
+#include "seg.h"
 
-char *user() {
+Seg user() {
 	char *username = getlogin();
-	static char hostname[MAX_LENGTH];
+	char hostname[MAX_LENGTH];
 	gethostname(hostname, MAX_LENGTH);
-	static char ret[MAX_LENGTH * 2 + 1];
-	sprintf(ret, "%s@%s", username, hostname);
-	return ret;
+	static Seg user;
+	user.color = BLUE;
+	sprintf(user.value, "%s@%s", username, hostname);
+	return user;
 }

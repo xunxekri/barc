@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "../constants.h"
+#include "seg.h"
 
 static int min(int a, int b) {
     return a > b ? b : a;
@@ -100,7 +101,7 @@ static void update_weather(char *buf, size_t buf_length) {
 			break;
 			case 0xb0:
 			case 43: //plus sign
-				*temp--; //skip
+				*temp -= 1; //skip
 			break;
 			default:
 				*temp = *whatever;
@@ -119,8 +120,8 @@ static void update_weather(char *buf, size_t buf_length) {
 	*temp2 = '\0';
 }
 
-char *weather() {
-	static char weather_str[MAX_LENGTH];
+Seg weather() {
+	static Seg weather_seg;
 	static time_t last_modified = 0;
 
 	struct stat file_stat;
@@ -128,8 +129,8 @@ char *weather() {
 		return "No weather data.";
 	} else if (file_stat.st_mtime > last_modified) {
 		last_modified = file_stat.st_mtime;
-		update_weather(weather_str, MAX_LENGTH);
+		update_weather(weather_seg.value, MAX_LENGTH);
 	}
 
-	return weather_str;
+	return weather_seg;
 }
