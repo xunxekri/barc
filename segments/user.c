@@ -1,10 +1,11 @@
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "../constants.h"
 #include "seg.h"
 
 Seg user() {
-	char *username = getlogin();
+	char *username = getenv("LOGNAME");
 	char hostname[MAX_LENGTH];
 	gethostname(hostname, MAX_LENGTH);
 	Seg user;
