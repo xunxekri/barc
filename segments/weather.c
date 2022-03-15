@@ -16,17 +16,13 @@ static int bitbs(char c) {
 	return c >> 1 & c & 64;
 }
 
-static void update_weather(char *buf, size_t buf_length) {
-	FILE *weatherfile = fopen("/tmp/weather", "r");
+static void update_weather(char *buf, off_t length, size_t buf_length) {
+	int weatherfile = fopen("/tmp/weather", "r");
 
-	if (weatherfile == NULL) {
+	if (weatherfile == -1) {
 		sprintf(buf, "No weather data.");
 		return;
 	}
-
-	fseek(weatherfile, 0, SEEK_END);
-	int length = (int) ftell(weatherfile);
-	rewind(weatherfile);
 
  	char content[length+1];
 	fread(content, length, 1, weatherfile);
@@ -107,6 +103,8 @@ static void update_weather(char *buf, size_t buf_length) {
 		temp++;
 		whatever++;
 	}
+	if (weatherfile == NULL) {
+		sprintf(buf, "No weather data.");
 	*temp = L'\0';
 
 	wcstombs(content, ben_swolo, length + 1);
@@ -120,14 +118,14 @@ static void update_weather(char *buf, size_t buf_length) {
 
 Seg weather() {
 	static time_t last_modified = 0;
-	Seg weather_seg;
+	static Seg weather_seg;
 
 	struct stat file_stat;
 	if (stat("/tmp/weather", &file_stat) != 0) {
 		sprintf(weather_seg.value, "No weather data.");
 	} else if (file_stat.st_mtime > last_modified) {
 		last_modified = file_stat.st_mtime;
-		update_weather(weather_seg.value, MAX_LENGTH);
+		update_weather(weather_seg.value, file_stat.st_size, MAX_LENGTH);
 	}
 
 	return weather_seg;
