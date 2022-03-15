@@ -25,15 +25,23 @@ static void update_weather(char *buf, off_t length, size_t buf_length) {
 	}
 
  	char content[length+1];
-	fread(content, length, 1, weatherfile);
-	content[length] = '\0';
-	fclose(weatherfile);
+	if (fread(content, 1, length, weatherfile) != length) {
+		sprintf(buf, "No weather data.");
+		fclose(weatherfile);
+		return;
+	} else {
+		content[length] = '\0';
+		fclose(weatherfile);
+	}
 
-	wchar_t adam_driver[length+1];
+	// get required length of wchar buffer
+	size_t wlength = mbstowcs(NULL, content, 0);
+
+	wchar_t adam_driver[wlength+1];
 	wchar_t *whatever = adam_driver;
-	wchar_t ben_swolo[length+1];
+	wchar_t ben_swolo[wlength+1];
 	wchar_t *temp = ben_swolo;
-	mbstowcs(adam_driver, content, length + 1);
+	mbstowcs(adam_driver, content, wlength + 1);
 	while (*whatever != L'\0') {
 		switch(*whatever) {
 			case 0x2600:
@@ -93,6 +101,7 @@ static void update_weather(char *buf, off_t length, size_t buf_length) {
 			case 0x1f32b:
 				*temp = 0xe31e;
 			break;
+			case L'\n':
 			case 0xb0:
 			case 43: //plus sign
 				temp--; //skip
