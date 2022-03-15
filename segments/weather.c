@@ -17,9 +17,9 @@ static int bitbs(char c) {
 }
 
 static void update_weather(char *buf, off_t length, size_t buf_length) {
-	int weatherfile = fopen("/tmp/weather", "r");
+	FILE *weatherfile = fopen("/tmp/weather", "r");
 
-	if (weatherfile == -1) {
+	if (weatherfile == NULL) {
 		sprintf(buf, "No weather data.");
 		return;
 	}
@@ -103,8 +103,6 @@ static void update_weather(char *buf, off_t length, size_t buf_length) {
 		temp++;
 		whatever++;
 	}
-	if (weatherfile == NULL) {
-		sprintf(buf, "No weather data.");
 	*temp = L'\0';
 
 	wcstombs(content, ben_swolo, length + 1);
