@@ -9,7 +9,7 @@ Seg network(NMClient *client) {
 	const GPtrArray *devices = nm_client_get_devices(client);
 	for (int i = 0; i < devices->len; i++) {
 		NMDevice *device = g_ptr_array_index(devices, i);
-		if (nm_device_get_state(device) == NM_DEVICE_STATE_ACTIVATED) {
+		if (nm_device_get_device_type(device) == NM_DEVICE_TYPE_WIFI && nm_device_get_state(device) == NM_DEVICE_STATE_ACTIVATED) {
 			NMAccessPoint *active_ap = nm_device_wifi_get_active_access_point(NM_DEVICE_WIFI(device));
 			if (active_ap != NULL) {
 				GBytes *active_ssid = nm_access_point_get_ssid(active_ap);
@@ -28,6 +28,8 @@ Seg network(NMClient *client) {
 				}
 			}
 			break;
+		} else {
+			sprintf(net.value, "No WiFi");
 		}
 	}
 
