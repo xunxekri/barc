@@ -14,7 +14,14 @@
 
 int main(int argc, char **argv) {
 	setlocale(LC_ALL, "en_US.UTF-8");
+
 	NMClient *client = nm_client_new(NULL, NULL);
+	if (client == NULL) {
+		// This is unrecoverable
+		fprintf(stderr, "Failed to create nm client.\n");
+		return 1;
+	}
+
 	FILE *meminfo = fopen("/proc/meminfo", "r");
 	setbuf(meminfo, NULL);
 	FILE *topbar = popen("lemonbar -a 20 -g +0+60 -f \"CaskaydiaCove Nerd Font:size=15\" -B \"#161320\"", "w");
