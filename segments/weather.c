@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <wchar.h>
 #include <string.h>
-#include <locale.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -29,7 +28,6 @@ static void update_weather(char *buf, size_t buf_length) {
 	int length = (int) ftell(weatherfile);
 	rewind(weatherfile);
 
- 	setlocale(LC_ALL, "en_US.UTF-8");
  	char content[length+1];
 	fread(content, length, 1, weatherfile);
 	content[length] = '\0';
@@ -121,8 +119,8 @@ static void update_weather(char *buf, size_t buf_length) {
 }
 
 Seg weather() {
-	static Seg weather_seg;
 	static time_t last_modified = 0;
+	Seg weather_seg;
 
 	struct stat file_stat;
 	if (stat("/tmp/weather", &file_stat) != 0) {

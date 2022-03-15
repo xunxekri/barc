@@ -3,6 +3,6 @@
 
 #include "seg.h"
 
-Seg memory();
+Seg memory(FILE *meminfo);
 
 #endif

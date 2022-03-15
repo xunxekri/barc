@@ -4,7 +4,7 @@
 #include "seg.h"
 
 Seg network(NMClient *client) {
-	static Seg net;
+	Seg net;
 	if (client == NULL) {
 		sprintf(net.value, "Failed to create nm client.\n");
 	} else {

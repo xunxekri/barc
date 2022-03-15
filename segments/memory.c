@@ -1,12 +1,23 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+#include <sys/types.h>
 #include <unistd.h>
+
 #include "../constants.h"
 #include "seg.h"
 
-Seg memory() {
-	double total_pages = (double) sysconf( _SC_PHYS_PAGES);
-	double used_pages = total_pages - (double) sysconf( _SC_AVPHYS_PAGES);
-	static Seg mem;
-	sprintf(mem.value, "\ufb19%.1f%%%%",  (used_pages / total_pages) * 100.);
+Seg memory(FILE *meminfo) {
+	double total, available;
+	Seg mem;
+
+	rewind(meminfo);
+	if (fscanf(meminfo, "MemTotal: %lf kB\nMemFree: %*f kB\nMemAvailable: %lf kB", &total, &available) != 2) {
+		sprintf(mem.value, "\ufb19NA%%%%");
+		return mem;
+	}
+
+	double used = total - available;
+	sprintf(mem.value, "\ufb19%.1f%%%%", used / total * 100);
 	return mem;
 }
