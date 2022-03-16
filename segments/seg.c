@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include "seg.h"
+#include <stdio.h>
 
 const char *COLOR_STRINGS[] = {
 	[FLAMINGO] = "F2CDCD",
@@ -27,15 +28,19 @@ const char *COLOR_STRINGS[] = {
 	[TRANSPARENT] = "00000000"
 };
 
+Color PERCENT_COLORS[] = {
+	RED,
+	PEACH,
+	YELLOW,
+	GREEN,
+	TEAL,
+	BLUE,
+	SKY,
+	MAUVE
+};
+
 Color percent_to_color(int percent, bool high_is_bad) {
 	if (percent < 0 || percent > 100) return WHITE;
 	if(high_is_bad) percent = 100 - percent;
-	else if (percent >= 88) return MAUVE;
-	else if (percent >= 76) return SKY;
-	else if (percent >= 63) return BLUE;
-	else if (percent >= 51) return TEAL;
-	else if (percent >= 38) return GREEN;
-	else if (percent >= 26) return YELLOW;
-	else if (percent >= 13) return PEACH;
-	else return RED;
+	return PERCENT_COLORS[percent * 2 / 25 - !(percent % 25) + !percent];
 }
