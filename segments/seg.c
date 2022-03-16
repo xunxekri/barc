@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "seg.h"
 
 const char *COLOR_STRINGS[] = {
@@ -26,8 +27,9 @@ const char *COLOR_STRINGS[] = {
 	[TRANSPARENT] = "00000000"
 };
 
-Color percent_to_color(int percent) {
+Color percent_to_color(int percent, bool high_is_bad) {
 	if (percent < 0 || percent > 100) return WHITE;
+	if(high_is_bad) percent = 100 - percent;
 	else if (percent >= 88) return MAUVE;
 	else if (percent >= 76) return SKY;
 	else if (percent >= 63) return BLUE;

@@ -1,6 +1,7 @@
 #ifndef BARC_SEG_H
 #define BARC_SEG_H
 
+#include <stdbool.h>
 #include "../constants.h"
 
 typedef enum {
@@ -36,6 +37,6 @@ typedef struct {
 
 extern const char *COLOR_STRINGS[];
 
-Color percent_to_color(int percent);
+Color percent_to_color(int percent, bool high_is_bad);
 
 #endif
