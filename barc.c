@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
     setlinebuf(topbar);
     //setlinebuf(bottombar);
 
+	Seg u = user(); //not liable to change users while running
 	while (1) {
-		Seg u = user();
 		Seg d = datetime();
 		Seg w = weather();
 		Seg m = memory(meminfo);
