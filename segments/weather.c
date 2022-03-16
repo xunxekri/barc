@@ -12,7 +12,7 @@ static int min(int a, int b) {
     return a > b ? b : a;
 }
 
-static int bitbs(char c) {
+static int is_utf8_header_char(char c) {
 	return c >> 1 & c & 64;
 }
 
@@ -103,7 +103,7 @@ static void update_weather(char *buf, off_t length, size_t buf_length) {
 			break;
 			case L'\n':
 			case 0xb0:
-			case 43: //plus sign
+			case L'+': //plus sign
 				temp--; //skip
 			break;
 			default:
@@ -117,7 +117,9 @@ static void update_weather(char *buf, off_t length, size_t buf_length) {
 	wcstombs(content, ben_swolo, length + 1);
 	strncpy(buf, content, buf_length);
 	char *temp2 = buf + buf_length - 1;
-	while(bitbs(*temp2))
+	
+	//characters are at most 2 bytes, so if the last byte is a utf 8 header char, truncate at that point
+	if(is_utf8_header_char(*temp2))
 		temp2--;
 
 	*temp2 = '\0';
