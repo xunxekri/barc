@@ -28,7 +28,7 @@ const char *COLOR_STRINGS[] = {
 	[TRANSPARENT] = "00000000"
 };
 
-Color PERCENT_COLORS[] = {
+static const Color PERCENT_COLORS[] = {
 	RED,
 	PEACH,
 	YELLOW,
@@ -41,6 +41,6 @@ Color PERCENT_COLORS[] = {
 
 Color percent_to_color(int percent, bool high_is_bad) {
 	if (percent < 0 || percent > 100) return WHITE;
-	if(high_is_bad) percent = 100 - percent;
+	if (high_is_bad) percent = 100 - percent;
 	return PERCENT_COLORS[percent * 2 / 25 - !(percent % 25) + !percent];
 }
