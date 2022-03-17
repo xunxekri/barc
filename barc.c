@@ -19,7 +19,6 @@
 enum Bar {TOP, BOTTOM};
 
 static FILE *startbar(enum Bar bar) {
-
 	int shpipe[2];
 	if (pipe(shpipe) == -1) {
 		perror("Failed to open pipe for sh.");
@@ -59,6 +58,7 @@ static FILE *startbar(enum Bar bar) {
 		// child process
 		dup2(barpipe[0], STDIN_FILENO); // replace stdin with pipe to parent
 		dup2(shpipe[1], STDOUT_FILENO); // replace stdout with pipe to sh
+		close(barpipe[1]);
 
 		if (bar == TOP)
 			execlp("lemonbar", "lemonbar", "-a", "20", "-g", "+0+60", "-f", "CaskaydiaCove Nerd Font:size=15", "-B", "#161320", NULL);
