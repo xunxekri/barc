@@ -19,24 +19,46 @@
 enum Bar {TOP, BOTTOM};
 
 static FILE *startbar(enum Bar bar) {
-	int pipefd[2];
-	if (pipe(pipefd) == -1) {
+
+	int shpipe[2];
+	if (pipe(shpipe) == -1) {
+		perror("Failed to open pipe for sh.");
+		return NULL;
+	}
+
+	// fork sh
+	pid_t shpid = vfork();
+	if (shpid == -1) {
+		perror("Failed to fork process for sh.");
+		return NULL;
+	} else if (shpid) {
+		close(shpipe[0]);
+	} else {
+		dup2(shpipe[0], STDIN_FILENO);
+		close(shpipe[1]);
+		execl("/bin/sh", "sh", NULL);
+	}
+
+	int barpipe[2];
+	if (pipe(barpipe) == -1) {
 		perror("Failed to open pipe for bar.");
 		return NULL;
 	}
 
-	pid_t pid = vfork();
-	if (pid == -1) {
+	// fork bar
+	pid_t barpid = vfork();
+	if (barpid == -1) {
 		perror("Failed to fork process for bar.");
 		return NULL;
-	} else if (pid) {
+	} else if (barpid) {
 		// parent process
-		close(pipefd[0]); // don't need to read from child
-		return fdopen(pipefd[1], "w");
+		close(barpipe[0]); // don't need to read from bar
+		close(shpipe[1]); // don't need to write to sh from parent
+		return fdopen(barpipe[1], "w");
 	} else {
 		// child process
-		close(pipefd[1]); // don't need to write to parent
-		dup2(pipefd[0], STDIN_FILENO); // replace stdin with pipe
+		dup2(barpipe[0], STDIN_FILENO); // replace stdin with pipe to parent
+		dup2(shpipe[1], STDOUT_FILENO); // replace stdout with pipe to sh
 
 		if (bar == TOP)
 			execlp("lemonbar", "lemonbar", "-a", "20", "-g", "+0+60", "-f", "CaskaydiaCove Nerd Font:size=15", "-B", "#161320", NULL);
