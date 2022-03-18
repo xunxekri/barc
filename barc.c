@@ -53,7 +53,9 @@ static FILE *startbar(enum Bar bar) {
 		// parent process
 		close(barpipe[0]); // don't need to read from bar
 		close(shpipe[1]); // don't need to write to sh from parent
-		return fdopen(barpipe[1], "w");
+		FILE *result = fdopen(barpipe[1], "w");
+		setlinebuf(result);
+		return result;
 	} else {
 		// child process
 		dup2(barpipe[0], STDIN_FILENO); // replace stdin with pipe to parent
@@ -69,6 +71,8 @@ static FILE *startbar(enum Bar bar) {
 
 int main(int argc, char **argv) {
 	setlocale(LC_ALL, "en_US.UTF-8");
+	FILE *topbar = startbar(TOP);
+	//FILE *bottombar = startbar(BOTTOM);
 
 	NMClient *client = nm_client_new(NULL, NULL);
 	if (client == NULL) {
@@ -79,10 +83,6 @@ int main(int argc, char **argv) {
 
 	FILE *meminfo = fopen("/proc/meminfo", "r");
 	setbuf(meminfo, NULL);
-	FILE *topbar = startbar(TOP);
-	//FILE *bottombar = startbar(BOTTOM);
-	setlinebuf(topbar);
-	//setlinebuf(bottombar);
 
 	Seg u = user(); //not liable to change users while running
 	while (1) {
