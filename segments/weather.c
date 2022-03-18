@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <wchar.h>
 #include <string.h>
+#include <wchar.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -117,7 +117,7 @@ static void update_weather(char *buf, off_t length, size_t buf_length) {
 	wcstombs(content, ben_swolo, length + 1);
 	strncpy(buf, content, buf_length);
 	char *temp2 = buf + buf_length - 1;
-	
+
 	//characters are at most 2 bytes, so if the last byte is a utf 8 header char, truncate at that point
 	if(is_utf8_header_char(*temp2))
 		temp2--;

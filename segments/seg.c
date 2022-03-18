@@ -1,6 +1,6 @@
+#include <stdio.h>
 #include <stdbool.h>
 #include "seg.h"
-#include <stdio.h>
 
 const char *COLOR_STRINGS[] = {
 	[FLAMINGO] = "F2CDCD",
