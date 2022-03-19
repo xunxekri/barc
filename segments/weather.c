@@ -8,15 +8,11 @@
 #include "../constants.h"
 #include "seg.h"
 
-static int min(int a, int b) {
-    return a > b ? b : a;
-}
-
 static int is_utf8_header_char(char c) {
 	return c >> 1 & c & 64;
 }
 
-static void update_weather(char *buf, off_t length, size_t buf_length) {
+static void update_weather(char *buf, size_t length, size_t buf_length) {
 	FILE *weatherfile = fopen("/tmp/weather", "r");
 
 	if (weatherfile == NULL) {
@@ -115,7 +111,7 @@ static void update_weather(char *buf, off_t length, size_t buf_length) {
 	*temp = L'\0';
 
 	wcstombs(content, ben_swolo, length + 1);
-	strncpy(buf, content, buf_length);
+	strncpy(buf, content, buf_length - 1);
 	char *temp2 = buf + buf_length - 1;
 
 	//characters are at most 2 bytes, so if the last byte is a utf 8 header char, truncate at that point

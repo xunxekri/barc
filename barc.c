@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
@@ -67,6 +68,8 @@ static FILE *startbar(enum Bar bar) {
 		else if (bar == BOTTOM)
 			execlp("lemonbar", "lemonbar", "-f", "CaskaydiaCove Nerd Font:size=15", "-B", "#161320", "-b", "-a", "20", NULL);
 	}
+
+	assert(0 && "Unreachable");
 }
 
 int main(int argc, char **argv) {

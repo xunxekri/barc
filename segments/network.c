@@ -7,7 +7,7 @@ Seg network(NMClient *client) {
 	Seg net;
 
 	const GPtrArray *devices = nm_client_get_devices(client);
-	for (int i = 0; i < devices->len; i++) {
+	for (unsigned int i = 0; i < devices->len; i++) {
 		NMDevice *device = g_ptr_array_index(devices, i);
 		if (nm_device_get_device_type(device) == NM_DEVICE_TYPE_WIFI && nm_device_get_state(device) == NM_DEVICE_STATE_ACTIVATED) {
 			NMAccessPoint *active_ap = nm_device_wifi_get_active_access_point(NM_DEVICE_WIFI(device));
