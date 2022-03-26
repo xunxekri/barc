@@ -13,11 +13,11 @@ Seg memory(FILE *meminfo) {
 
 	rewind(meminfo);
 	if (fscanf(meminfo, "MemTotal: %lf kB\nMemFree: %*f kB\nMemAvailable: %lf kB", &total, &available) != 2) {
-		sprintf(mem.value, "\ufb19NA%%%%");
+		sprintf(mem.value, "\uf85a???%%%%");
 		return mem;
 	}
 
 	double used = total - available;
-	sprintf(mem.value, "\ufb19%.1f%%%%", used / total * 100);
+	sprintf(mem.value, "\uf85a%.1f%%%%", used / total * 100);
 	return mem;
 }
